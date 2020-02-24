@@ -43,9 +43,8 @@ class SentenceSegmentation():
         list
             A list of strings where each strin is a single sentence
         """
+        self.tokenizer = nltk.tokenize.punkt.PunktSentenceTokenizer()
+        segmentedText = self.tokenizer.tokenize(text)
 
-        segmentedText = None
-
-        #Fill in code here
-        
         return segmentedText
+
