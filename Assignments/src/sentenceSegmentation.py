@@ -7,48 +7,44 @@ from util import *
 
 class SentenceSegmentation():
 
-	def naive(self, text):
-		"""
-		Sentence Segmentation using a Naive Approach
+    def naive(self, text):
+        """
+        Sentence Segmentation using a Naive Approach
 
-		Parameters
-		----------
-		arg1 : str
-			A string (a bunch of sentences)
+        Parameters
+        ----------
+        arg1 : str
+            A string (a bunch of sentences)
 
-		Returns
-		-------
-		list
-			A list of strings where each string is a single sentence
-		"""
-
-		segmentedText = None
-
-		#Fill in code here
-
-		return segmentedText
+        Returns
+        -------
+        list
+            A list of strings where each string is a single sentence
+        """
+        self.sentenceDelimiters = "\s[.\n?!#]\s"
+        segmentedText = re.split(self.sentenceDelimiters,text)
+        return segmentedText
 
 
 
 
 
-	def punkt(self, text):
-		"""
-		Sentence Segmentation using the Punkt Tokenizer
+    def punkt(self, text):
+        """
+        Sentence Segmentation using the Punkt Tokenizer
 
-		Parameters
-		----------
-		arg1 : str
-			A string (a bunch of sentences)
+        Parameters
+        ----------
+        arg1 : str
+            A string (a bunch of sentences)
 
-		Returns
-		-------
-		list
-			A list of strings where each strin is a single sentence
-		"""
+        Returns
+        -------
+        list
+            A list of strings where each strin is a single sentence
+        """
+        self.tokenizer = nltk.tokenize.punkt.PunktSentenceTokenizer()
+        segmentedText = self.tokenizer.tokenize(text)
 
-		segmentedText = None
+        return segmentedText
 
-		#Fill in code here
-		
-		return segmentedText
