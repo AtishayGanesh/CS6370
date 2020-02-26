@@ -1,13 +1,14 @@
 from util import *
 
 # Add your import statements here
-
+from time import time
 
 
 
 class InflectionReduction:
     def __init__(self):
-        self.lemmatizer = nltk.stem.WordNetLemmatizer()
+        self.stemmer = nltk.stem.porter.PorterStemmer()
+        self.characters = './\\\'\",!@#$%%^&*()\{\}'
     def reduce(self, text):
         """
         Stemming/Lemmatization
@@ -26,18 +27,15 @@ class InflectionReduction:
         """
 
         reducedText = []
-        print(self.lemmatizer.lemmatize('corpora'))
-        #raise AssertionError
         #Fill in code here
         for sentence in text:
-            reducedSentence = [self.lemmatizer.lemmatize(word)
-             for word in sentence]
+            reducedSentence =[]
+            for word in sentence:
+                strippedWord = word.strip(self.characters)
+                if word:
+                    reducedSentence.append(self.lemmatizer.stem(strippedWord))
             reducedText.append(reducedSentence)
 
 
 
         return reducedText
-if __name__=="__main__":
-    a = InflectionReduction()
-    b = [['my','names','are','corpora'],['her','women','eating','analysis','leaves','operations'],['to','being','desirable']]
-    print(a.reduce(b))
