@@ -1,7 +1,6 @@
 from util import *
 
 # Add your import statements here
-from time import time
 
 
 
@@ -27,13 +26,12 @@ class InflectionReduction:
         """
 
         reducedText = []
-        #Fill in code here
         for sentence in text:
             reducedSentence =[]
             for word in sentence:
                 strippedWord = word.strip(self.characters)
-                if word:
-                    reducedSentence.append(self.lemmatizer.stem(strippedWord))
+                if strippedWord !='':
+                    reducedSentence.append(self.stemmer.stem(strippedWord))
             reducedText.append(reducedSentence)
 
 
