@@ -23,7 +23,7 @@ class Tokenization():
 		"""
 
 		tokenizedText = []
-		delimiters = "; |, |\* |\n| |: |'|' |-"
+		delimiters = ";|,|\* |\s| |:|'|' |-"
 		for sentence in text:
 			words = re.split(delimiters,sentence)
 			tokenizedText.append(words)
