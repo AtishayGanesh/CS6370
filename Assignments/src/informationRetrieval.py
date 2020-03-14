@@ -26,9 +26,16 @@ class InformationRetrieval():
 		-------
 		None
 		"""
-
-		index = None
-
+		index = {}
+		doc_counter = 0
+		for document in docs:
+			for sentence in document:
+				for word in sentence:
+					if(index.has_key(word)):
+						index[word][1] += 1
+					else:
+						index[word] = [docIDs[doc_counter], 1]
+			doc_counter += 1
 		#Fill in code here
 
 		self.index = index
