@@ -9,6 +9,11 @@ class InformationRetrieval():
 
     def __init__(self):
         self.index = None
+        self.N = None
+        self.doc_mag = None
+        self.rev_index = None
+        self.docs = None
+        self.docIDs = None
 
     def buildIndex(self, docs, docIDs):
         """
@@ -27,6 +32,7 @@ class InformationRetrieval():
         None
         """
         index = {}
+        rev_index = {}
         doc_counter = 0
         for document in docs:
             for sentence in document:
@@ -42,10 +48,22 @@ class InformationRetrieval():
                     else:
                             index[word] = []
                             index[word].append([docIDs[doc_counter], 1])
+                    if(rev_index.has_key(docIDs[doc_counter])):
+	                    rev_index[docIDs[doc_counter]] = {}
+	                    rev_index[docIDs[doc_counter]][word] = 1
+                    else:
+	                    if(rev_index[docIDs[doc_counter]].has_key(word)):
+	                    	rev_index[docIDs[doc_counter]][word] += 1
+	                    else:
+	                    	rev_index[docIDs[doc_counter]][word] = 1
             doc_counter += 1
         #Fill in code here
 
         self.index = index
+        self.N = len(docIDs)
+        self.rev_index = rev_index
+        # self.docs = docs
+        # self.docIDs = docIDs
 
 
     def rank(self, queries):
@@ -65,6 +83,12 @@ class InformationRetrieval():
             A list of lists of integers where the ith sub-list is a list of IDs
             of documents in their predicted order of relevance to the ith query
         """
+        
+        for query in queries:
+        	query_vector={}
+        	for sentence in query:
+        		for word in sentence:
+        			if(query_vector.has_key)
 
         doc_IDs_ordered = []
 
