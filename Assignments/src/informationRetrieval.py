@@ -38,24 +38,22 @@ class InformationRetrieval():
             for sentence in document:
                 for word in sentence:
                     if(index.has_key(word)):
-                        flag = 0
-                        for i in range(len(index[word])):
-                            if(index[word][i][0] == docIDs[doc_counter]):
-                                index[word][i][1] += 1
-                                flag = 1
-                        if(flag == 0):
-                            index[word].append([docIDs[doc_counter], 1])
+                        if(index[word].has_key(docIDs[doc_counter])):
+                        	index[word][docIDs[doc_counter]] += 1
+                        else:
+                        	index[word][docIDs[doc_counter]] = 1
                     else:
-                            index[word] = []
-                            index[word].append([docIDs[doc_counter], 1])
+                    	index[word] = {}
+                    	index[word][docIDs[doc_counter]] = 1	
+
                     if(rev_index.has_key(docIDs[doc_counter])):
-	                    rev_index[docIDs[doc_counter]] = {}
-	                    rev_index[docIDs[doc_counter]][word] = 1
-                    else:
 	                    if(rev_index[docIDs[doc_counter]].has_key(word)):
 	                    	rev_index[docIDs[doc_counter]][word] += 1
 	                    else:
 	                    	rev_index[docIDs[doc_counter]][word] = 1
+                    else:
+	                    rev_index[docIDs[doc_counter]] = {}
+	                    rev_index[docIDs[doc_counter]][word] = 1
             doc_counter += 1
         #Fill in code here
 
