@@ -83,14 +83,37 @@ class InformationRetrieval():
             A list of lists of integers where the ith sub-list is a list of IDs
             of documents in their predicted order of relevance to the ith query
         """
-        
+        doc_IDs_ordered = []
+        doc_mags = {}
+        for docID in rev_index:
+        	curr_doc_mag = 0.0
+        	for word in rev_index[docID]:
+        		curr_doc_mag += (rev_index[docID][word]*wordIDF[word])**2
+        	doc_mags[docID] = np.sqrt(curr_doc_mag)
         for query in queries:
         	query_vector={}
         	for sentence in query:
         		for word in sentence:
-        			if(query_vector.has_key)
-
-        doc_IDs_ordered = []
+        			if(query_vector.has_key(word)):
+        				query_vector[word] += 1
+        			else:
+        				query_vector[word] = 1
+        	query_doc_sim = []
+        	query_mag = 0.0
+        	for word in query_vector:
+        		query_mag += (query_vector[word]*wordIDF[word])**2
+        	np.sqrt(query_mag)
+        	for docID in rev_index:
+        		cos_sim = 0.0
+        		for word in query_vector:
+        			cos_sim +=  (query_vector[word]*rev_index[docID][word]*(wordIDF[word]**2))
+        		cos_sim /= (query_mag*doc_mags[docID])
+        		query_doc_sim.append([cos_sim, docID])
+        	curr_doc_IDs_ordered = []
+        	query_doc_sim.sort(reverse = True)
+        	for ranking in query_doc_sim:
+        		curr_doc_IDs_ordered.append(ranking[1])
+        	doc_IDs_ordered.append(curr_doc_IDs_ordered)
 
         #Fill in code here
     
