@@ -85,6 +85,9 @@ class InformationRetrieval():
         """
         doc_IDs_ordered = []
         doc_mags = {}
+        wordIDF = {}
+        for word in index:
+        	wordIDF[word] = np.log((self.N)/(len(index[word])))
         for docID in rev_index:
         	curr_doc_mag = 0.0
         	for word in rev_index[docID]:
