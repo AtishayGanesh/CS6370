@@ -2,7 +2,7 @@ from util import *
 
 # Add your import statements here
 
-
+import numpy as np
 
 
 class InformationRetrieval():
@@ -10,10 +10,7 @@ class InformationRetrieval():
     def __init__(self):
         self.index = None
         self.N = None
-        self.doc_mag = None
         self.rev_index = None
-        self.docs = None
-        self.docIDs = None
 
     def buildIndex(self, docs, docIDs):
         """
@@ -37,8 +34,8 @@ class InformationRetrieval():
         for document in docs:
             for sentence in document:
                 for word in sentence:
-                    if(index.has_key(word)):
-                        if(index[word].has_key(docIDs[doc_counter])):
+                    if(word in index):
+                        if(docIDs[doc_counter] in index[word]):
                         	index[word][docIDs[doc_counter]] += 1
                         else:
                         	index[word][docIDs[doc_counter]] = 1
@@ -46,8 +43,8 @@ class InformationRetrieval():
                     	index[word] = {}
                     	index[word][docIDs[doc_counter]] = 1	
 
-                    if(rev_index.has_key(docIDs[doc_counter])):
-	                    if(rev_index[docIDs[doc_counter]].has_key(word)):
+                    if(docIDs[doc_counter] in rev_index):
+	                    if(word in rev_index[docIDs[doc_counter]]):
 	                    	rev_index[docIDs[doc_counter]][word] += 1
 	                    else:
 	                    	rev_index[docIDs[doc_counter]][word] = 1
@@ -81,6 +78,9 @@ class InformationRetrieval():
             A list of lists of integers where the ith sub-list is a list of IDs
             of documents in their predicted order of relevance to the ith query
         """
+        index = self.index
+        N = self.N
+        rev_index = self.rev_index
         doc_IDs_ordered = []
         doc_mags = {}
         wordIDF = {}
@@ -95,19 +95,21 @@ class InformationRetrieval():
         	query_vector={}
         	for sentence in query:
         		for word in sentence:
-        			if(query_vector.has_key(word)):
+        			if(word in query_vector):
         				query_vector[word] += 1
         			else:
         				query_vector[word] = 1
         	query_doc_sim = []
         	query_mag = 0.0
         	for word in query_vector:
-        		query_mag += (query_vector[word]*wordIDF[word])**2
+        		if(word in wordIDF):
+        			query_mag += (query_vector[word]*wordIDF[word])**2
         	np.sqrt(query_mag)
         	for docID in rev_index:
         		cos_sim = 0.0
         		for word in query_vector:
-        			cos_sim +=  (query_vector[word]*rev_index[docID][word]*(wordIDF[word]**2))
+        			if(word in rev_index[docID]):
+        				cos_sim +=  (query_vector[word]*rev_index[docID][word]*(wordIDF[word]**2))
         		cos_sim /= (query_mag*doc_mags[docID])
         		query_doc_sim.append([cos_sim, docID])
         	curr_doc_IDs_ordered = []
@@ -122,4 +124,10 @@ class InformationRetrieval():
 
 
 
-
+docs = [[["dog", "animal"], ["cat", "animal"]],[["crow", "bird"], ["cat", "animal"]]]
+docIDs = [110,111]
+queries = [[["is", "dog", "animal"], ["cat"]], [["is", "crow", "bird"], ["cat"]]]
+a = InformationRetrieval()
+b = a.buildIndex(docs, docIDs)
+c = a.rank(queries)
+print(c)
