@@ -123,6 +123,7 @@ class Evaluation():
         float
             The mean recall value as a number between 0 and 1
         """
+        
 
         meanRecall = -1
 
