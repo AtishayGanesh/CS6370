@@ -29,9 +29,8 @@ class Evaluation():
         float
             The precision value as a number between 0 and 1
         """
-        pred_k = set(query_doc_IDs_ordered[0:k])
+        pred_k = set([str(m) for m in  query_doc_IDs_ordered[0:k]])
         true_k = set(true_doc_IDs)
-
 
 
         precision = len(pred_k&true_k)/len(pred_k)
@@ -62,15 +61,14 @@ class Evaluation():
         float
             The mean precision value as a number between 0 and 1
         """
-
         dict_sorted_queries = dict(
             zip(query_ids, [[[],[],[],[]] for i in doc_IDs_ordered]))
-        for elt in qrels:
 
+        for elt in qrels:
             q,p,i = elt['query_num'],elt['position'],elt['id']
 
-            if q in query_ids:
-                dict_sorted_queries[q][p-1].append(i)
+            if int(q) in query_ids:
+                dict_sorted_queries[int(q)][p-1].append(i)
 
         for key in dict_sorted_queries.keys():
             val = dict_sorted_queries[key]
@@ -117,10 +115,13 @@ class Evaluation():
 
         recall = -1
 
-        pred_k = set(query_doc_IDs_ordered[0:k])
+        pred_k = set([str(m) for m in  query_doc_IDs_ordered[0:k]])
         true_k = set(true_doc_IDs)
 
 
+        if len(true_k)==0:
+            print("Issue","Query_ID",query_id)
+            return 0
 
         recall = len(pred_k&true_k)/len(true_k)
 
@@ -157,8 +158,8 @@ class Evaluation():
 
             q,p,i = elt['query_num'],elt['position'],elt['id']
 
-            if q in query_ids:
-                dict_sorted_queries[q][p-1].append(i)
+            if int(q) in query_ids:
+                dict_sorted_queries[int(q)][p-1].append(i)
 
         for key in dict_sorted_queries.keys():
             val = dict_sorted_queries[key]
@@ -168,6 +169,7 @@ class Evaluation():
 
         sum_recalls = 0
         for i,query in enumerate(query_ids):
+
             sum_recalls+= self.queryRecall(
                 doc_IDs_ordered[i],query,dict_sorted_queries[query],k)
 
@@ -246,8 +248,8 @@ class Evaluation():
 
             q,p,i = elt['query_num'],elt['position'],elt['id']
 
-            if q in query_ids:
-                dict_sorted_queries[q][p-1].append(i)
+            if int(q) in query_ids:
+                dict_sorted_queries[int(q)][p-1].append(i)
 
         for key in dict_sorted_queries.keys():
             val = dict_sorted_queries[key]
@@ -294,27 +296,27 @@ class Evaluation():
         and also for fetching bad documents
         """
 
-        pred_k  = query_doc_IDs_ordered
+        pred_k  = [str(k) for k in query_doc_IDs_ordered]
         true_scores = []
         cts = [0]*len(true_doc_IDs)
         for elt in pred_k:
             if elt in true_doc_IDs[0]:
-                pred_score = 3
+                pred_score = 4
                 cts[0]+=1
             elif elt in true_doc_IDs[1]:
-                pred_score = 2
+                pred_score = 3
                 cts[1]+=1
 
             elif elt in true_doc_IDs[2]:
-                pred_score = 1
+                pred_score = 2
                 cts[2]+=1
 
             elif elt in true_doc_IDs[3]:
-                pred_score = 0
+                pred_score = 1
                 cts[3]+=1
 
             else:
-                pred_score = -1
+                pred_score = 0
             true_scores.append(pred_score)
         true_scores = [true_scores]
 
@@ -324,7 +326,7 @@ class Evaluation():
         total_rel= np.array([len(i) for i in true_doc_IDs])
 
         missed = total_rel -np.array(cts)
-        true_scores[0] += list(np.concatenate([ (3-i)*np.ones(missed[i]) for i in range(4)]))
+        true_scores[0] += list(np.concatenate([ (4-i)*np.ones(missed[i]) for i in range(4)]))
         pred_scores[0]+=[0]*np.sum(missed)
 
 
@@ -362,8 +364,8 @@ class Evaluation():
 
             q,p,i = elt['query_num'],elt['position'],elt['id']
 
-            if q in query_ids:
-                dict_sorted_queries[q][p-1].append(i)
+            if int(q) in query_ids:
+                dict_sorted_queries[int(q)][p-1].append(i)
 
 
 
@@ -419,7 +421,7 @@ class Evaluation():
         return avgPrecision
 
 
-    def meanAveragePrecision(self, doc_IDs_ordered, query_ids, q_rels, k):
+    def meanAveragePrecision(self, doc_IDs_ordered, query_ids, qrels, k):
         """
         Computation of MAP of the Information Retrieval System
         at given value of k, averaged over all the queries
@@ -450,8 +452,8 @@ class Evaluation():
 
             q,p,i = elt['query_num'],elt['position'],elt['id']
 
-            if q in query_ids:
-                dict_sorted_queries[q][p-1].append(i)
+            if int(q) in query_ids:
+                dict_sorted_queries[int(q)][p-1].append(i)
 
         for key in dict_sorted_queries.keys():
             val = dict_sorted_queries[key]

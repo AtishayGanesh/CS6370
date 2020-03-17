@@ -199,6 +199,7 @@ class SearchEngine:
         plt.title("Evaluation Metrics - Cranfield Dataset")
         plt.xlabel("k")
         plt.savefig(args.out_folder + "eval_plot.png")
+        plt.show()
 
         
     def handleCustomQuery(self):
