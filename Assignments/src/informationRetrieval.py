@@ -2,7 +2,6 @@ from util import *
 
 # Add your import statements here
 
-import numpy as np
 
 
 class InformationRetrieval():
@@ -123,11 +122,12 @@ class InformationRetrieval():
         return doc_IDs_ordered
 
 
-
-docs = [[["dog", "animal"], ["cat", "animal"]],[["crow", "bird"], ["cat", "animal"]]]
-docIDs = [110,111]
-queries = [[["is", "dog", "animal"], ["cat"]], [["is", "crow", "bird"], ["cat"]]]
-a = InformationRetrieval()
-b = a.buildIndex(docs, docIDs)
-c = a.rank(queries)
-print(c)
+if __name__ == '__main__':
+    
+    docs = [[["dog", "animal"], ["cat", "animal"]],[["crow", "bird"], ["cat", "animal"]]]
+    docIDs = [110,111]
+    queries = [[["is", "dog", "animal"], ["cat"]], [["is", "crow", "bird"], ["cat"]]]
+    a = InformationRetrieval()
+    b = a.buildIndex(docs, docIDs)
+    c = a.rank(queries)
+    print(c)
