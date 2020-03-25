@@ -84,9 +84,9 @@ class InformationRetrieval():
         doc_mags = {}
         wordIDF = {}
         for word in index:
-        	wordIDF[word] = np.log((self.N)/(len(index[word])))
+        	wordIDF[word] = np.log((self.N+0.5)/(len(index[word])+0.5))
         for docID in rev_index:
-        	curr_doc_mag = 0.0
+        	curr_doc_mag = 0.01
         	for word in rev_index[docID]:
         		curr_doc_mag += (rev_index[docID][word]*wordIDF[word])**2
         	doc_mags[docID] = np.sqrt(curr_doc_mag)
@@ -99,9 +99,12 @@ class InformationRetrieval():
         			else:
         				query_vector[word] = 1
         	query_doc_sim = []
-        	query_mag = 0.0
+        	query_mag = 0.01
         	for word in query_vector:
         		if(word in wordIDF):
+        			query_mag += (query_vector[word]*wordIDF[word])**2
+        		else:
+        			wordIDF[word] = np.log((self.N+0.5)/(0.5))
         			query_mag += (query_vector[word]*wordIDF[word])**2
         	np.sqrt(query_mag)
         	for docID in rev_index:
