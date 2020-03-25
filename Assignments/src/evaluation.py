@@ -408,13 +408,18 @@ class Evaluation():
         """
         sum_prec = 0
         prev_rec = 0
+        ct =0
         for i in range(1,k+1):
             rec = self.queryRecall(query_doc_IDs_ordered, query_id, true_doc_IDs,i)
-            sum_prec += self.queryPrecision(
-                query_doc_IDs_ordered, query_id, true_doc_IDs,i)*(rec-prev_rec)
-            prev_rec = rec
+            if rec != prev_rec:
+                sum_prec += self.queryPrecision(
+                    query_doc_IDs_ordered, query_id, true_doc_IDs,i)
+                ct +=1
 
-        avgPrecision = sum_prec
+            prev_rec = rec
+        if ct ==0:
+            return 0
+        avgPrecision = sum_prec/ct
 
         #Fill in code here
 
