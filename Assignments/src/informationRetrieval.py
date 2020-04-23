@@ -35,21 +35,21 @@ class InformationRetrieval():
                 for word in sentence:
                     if(word in rev_index):
                         if(docIDs[doc_counter] in rev_index[word]):
-                        	rev_index[word][docIDs[doc_counter]] += 1
+                            rev_index[word][docIDs[doc_counter]] += 1
                         else:
-                        	rev_index[word][docIDs[doc_counter]] = 1
+                            rev_index[word][docIDs[doc_counter]] = 1
                     else:
-                    	rev_index[word] = {}
-                    	rev_index[word][docIDs[doc_counter]] = 1	
+                        rev_index[word] = {}
+                        rev_index[word][docIDs[doc_counter]] = 1    
 
                     if(docIDs[doc_counter] in index):
-	                    if(word in index[docIDs[doc_counter]]):
-	                    	index[docIDs[doc_counter]][word] += 1
-	                    else:
-	                    	index[docIDs[doc_counter]][word] = 1
+                        if(word in index[docIDs[doc_counter]]):
+                            index[docIDs[doc_counter]][word] += 1
+                        else:
+                            index[docIDs[doc_counter]][word] = 1
                     else:
-	                    index[docIDs[doc_counter]] = {}
-	                    index[docIDs[doc_counter]][word] = 1
+                        index[docIDs[doc_counter]] = {}
+                        index[docIDs[doc_counter]][word] = 1
             doc_counter += 1
         #Fill in code here
 
@@ -84,41 +84,41 @@ class InformationRetrieval():
         doc_mags = {}
         wordIDF = {}
         for word in rev_index:
-        	wordIDF[word] = np.log((self.N+0.5)/(len(rev_index[word])+0.5))
+            wordIDF[word] = np.log((self.N+0.5)/(len(rev_index[word])+0.5))
         for docID in index:
-        	curr_doc_mag = 0.0
-        	for word in index[docID]:
-        		curr_doc_mag += (index[docID][word]*wordIDF[word])**2
-        	doc_mags[docID] = np.sqrt(curr_doc_mag) + 0.01
+            curr_doc_mag = 0.0
+            for word in index[docID]:
+                curr_doc_mag += (index[docID][word]*wordIDF[word])**2
+            doc_mags[docID] = np.sqrt(curr_doc_mag) + 0.01
         for query in queries:
-        	query_vector={}
-        	for sentence in query:
-        		for word in sentence:
-        			if(word in query_vector):
-        				query_vector[word] += 1
-        			else:
-        				query_vector[word] = 1
-        	query_doc_sim = []
-        	query_mag = 0.0
-        	for word in query_vector:
-        		if(word in wordIDF):
-        			query_mag += (query_vector[word]*wordIDF[word])**2
-        		else:
-        			wordIDF[word] = np.log((self.N+0.5)/(0.5))
-        			query_mag += (query_vector[word]*wordIDF[word])**2
-        	query_mag = np.sqrt(query_mag) + 0.01
-        	for docID in index:
-        		cos_sim = 0.0
-        		for word in query_vector:
-        			if(word in index[docID]):
-        				cos_sim +=  (query_vector[word]*index[docID][word]*(wordIDF[word]**2))
-        		cos_sim /= (query_mag*doc_mags[docID])
-        		query_doc_sim.append([cos_sim, docID])
-        	curr_doc_IDs_ordered = []
-        	query_doc_sim.sort(reverse = True)
-        	for ranking in query_doc_sim:
-        		curr_doc_IDs_ordered.append(ranking[1])
-        	doc_IDs_ordered.append(curr_doc_IDs_ordered)
+            query_vector={}
+            for sentence in query:
+                for word in sentence:
+                    if(word in query_vector):
+                        query_vector[word] += 1
+                    else:
+                        query_vector[word] = 1
+            query_doc_sim = []
+            query_mag = 0.0
+            for word in query_vector:
+                if(word in wordIDF):
+                    query_mag += (query_vector[word]*wordIDF[word])**2
+                else:
+                    wordIDF[word] = np.log((self.N+0.5)/(0.5))
+                    query_mag += (query_vector[word]*wordIDF[word])**2
+            query_mag = np.sqrt(query_mag) + 0.01
+            for docID in index:
+                cos_sim = 0.0
+                for word in query_vector:
+                    if(word in index[docID]):
+                        cos_sim +=  (query_vector[word]*index[docID][word]*(wordIDF[word]**2))
+                cos_sim /= (query_mag*doc_mags[docID])
+                query_doc_sim.append([cos_sim, docID])
+            curr_doc_IDs_ordered = []
+            query_doc_sim.sort(reverse = True)
+            for ranking in query_doc_sim:
+                curr_doc_IDs_ordered.append(ranking[1])
+            doc_IDs_ordered.append(curr_doc_IDs_ordered)
     
         return doc_IDs_ordered
 
