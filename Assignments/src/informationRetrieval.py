@@ -96,9 +96,6 @@ class InformationRetrieval():
         list_words = list(rev_index.keys())
         list_docs = list(index.keys())
         word_locs = dict(zip(list_words,(list(range(len(list_words))))))
-        print(list_words[0:10])
-        print(index[1])
-        #tfidf  (1398,6605)
         tfidf_matrix =[]
         for i in index.keys():
             tfidf_row = np.zeros(len(list_words))
@@ -111,13 +108,13 @@ class InformationRetrieval():
             tfidf_matrix.append(tfidf_row)
         tfidf_matrix = np.array(tfidf_matrix)
 
-        #svd = TruncatedSVD(n_components=100,n_iter=10,random_state=420)
-        #svd.fit(tfidf_matrix)
-        #tfidf_smallened = svd.transform(tfidf_matrix)
-
+        svd = TruncatedSVD(n_components=1200,n_iter=20,random_state=420)
+        svd.fit(tfidf_matrix)
+        tfidf_smallened = svd.transform(tfidf_matrix)
+        print(svd.singular_values_)
 
         
-
+        ct = 0
         for query in queries:
             query_vector={}
             for sentence in query:
@@ -144,26 +141,27 @@ class InformationRetrieval():
             query_mag = np.sqrt(query_mag) + 0.01
             query_row/=(query_mag)
 
-            #query_smaller = svd.transform(query_row.reshape(1,-1))[0]
+            query_smaller = svd.transform(query_row.reshape(1,-1))[0]
 
 
-            cos_sim = (tfidf_matrix@query_row.T)/np.array(doc_mag_list)
+            cos_sim = (tfidf_smallened@query_smaller.T)/np.array(doc_mag_list)
 
-            query_doc_sim = list(zip(cos_sim,list_docs))     
-            # for docID in index:
-            #     cos_sim = 0.0
-            #     for word in query_vector:
-            #         if(word in index[docID]):
+            query_doc_sim = list(zip(cos_sim,list_docs))
+            query_doc_sim2 = []  
+            for docID in index:
+                cos_sim2 = 0.0
+                for word in query_vector:
+                    if(word in index[docID]):
 
-            #             cos_sim +=  (query_vector[word]*index[docID][word]*(wordIDF[word]**2))
-            #     cos_sim /= (query_mag*doc_mags[docID])
-            #     query_doc_sim.append([cos_sim, docID])
+                        cos_sim2 +=  (query_vector[word]*index[docID][word]*(wordIDF[word]**2))
+                cos_sim2 /= (query_mag*doc_mags[docID])
+                query_doc_sim2.append([cos_sim2, docID])
             curr_doc_IDs_ordered = []
             query_doc_sim.sort(reverse = True)
+            query_doc_sim2.sort(reverse=True)
             for ranking in query_doc_sim:
                 curr_doc_IDs_ordered.append(ranking[1])
-                doc_IDs_ordered.append(curr_doc_IDs_ordered)
-    
+            doc_IDs_ordered.append(curr_doc_IDs_ordered)
         return doc_IDs_ordered
 
 
