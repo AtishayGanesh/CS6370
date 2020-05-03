@@ -10,6 +10,7 @@ from sys import version_info
 import argparse
 import json
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Input compatibility for Python 2 and Python 3
 if version_info.major == 3:
@@ -172,10 +173,10 @@ class SearchEngine:
         wikiIDs = np.arange(len(list_wiki)).tolist()
         # Build document index
         a = self.informationRetriever
-        doc_index, doc_rev_index, doc_N = a.buildIndex(processedDocs, docIDs)
+        doc_index, doc_rev_index, doc_N = a.buildIndex(processedDocs, doc_ids)
         wiki_index, wiki_rev_index, wiki_N = a.buildIndex(processedWiki, wikiIDs)
         # Rank the documents for each query
-        doc_IDs_ordered = a.rank(queries, doc_index, doc_rev_index, doc_N, wiki_index, wiki_rev_index, wiki_N)
+        doc_IDs_ordered = a.rank(processedQueries, doc_index, doc_rev_index, doc_N, wiki_index, wiki_rev_index, wiki_N)
         # Read relevance judements
         qrels = json.load(open(args.dataset + "cran_qrels.json", 'r'))[:]
 
