@@ -3,6 +3,7 @@ from tokenization import Tokenization
 from inflectionReduction import InflectionReduction
 from stopwordRemoval import StopwordRemoval
 from informationRetrieval import InformationRetrieval
+from ESA import InformationRetrievalESA
 from evaluation import Evaluation
 import pickle
 from sys import version_info
@@ -32,7 +33,7 @@ class SearchEngine:
         self.inflectionReducer = InflectionReduction()
         self.stopwordRemover = StopwordRemoval()
 
-        self.informationRetriever = InformationRetrieval()
+        self.informationRetriever = InformationRetrievalESA()
         self.evaluator = Evaluation()
 
 
@@ -161,18 +162,20 @@ class SearchEngine:
         n_components =1200
 
         print(len(doc_ids))
-        if args.extend:
-            docs = docs +list_wiki
-            n_components=1400
-            doc_ids = doc_ids + list(range(max(doc_ids)+1,max(doc_ids)+len(list_wiki)+1))
-        # Process documents
+        # if args.extend:
+        #     docs = docs +list_wiki
+        #     n_components=1400
+        #     doc_ids = doc_ids + list(range(max(doc_ids)+1,max(doc_ids)+len(list_wiki)+1))
+        # # Process documents
         processedDocs = self.preprocessDocs(docs)
+        processedWiki = self.preprocessDocs(list_wiki)
+        wikiIDs = np.arange(len(list_wiki)).tolist()
         # Build document index
-
-        self.informationRetriever.buildIndex(processedDocs, doc_ids)
-
+        a = self.informationRetriever
+        doc_index, doc_rev_index, doc_N = a.buildIndex(processedDocs, docIDs)
+        wiki_index, wiki_rev_index, wiki_N = a.buildIndex(processedWiki, wikiIDs)
         # Rank the documents for each query
-        doc_IDs_ordered = self.informationRetriever.rank(processedQueries,n_components)
+        doc_IDs_ordered = a.rank(queries, doc_index, doc_rev_index, doc_N, wiki_index, wiki_rev_index, wiki_N)
         # Read relevance judements
         qrels = json.load(open(args.dataset + "cran_qrels.json", 'r'))[:]
 
