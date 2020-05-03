@@ -60,7 +60,7 @@ class InformationRetrieval():
         # self.docIDs = docIDs
 
 
-    def rank(self, queries):
+    def rank(self, queries,n_components):
         """
         Rank the documents according to relevance for each query
 
@@ -108,7 +108,7 @@ class InformationRetrieval():
             tfidf_matrix.append(tfidf_row)
         tfidf_matrix = np.array(tfidf_matrix)
 
-        svd = TruncatedSVD(n_components=1200,n_iter=20,random_state=420)
+        svd = TruncatedSVD(n_components=n_components,n_iter=10,random_state=420)
         svd.fit(tfidf_matrix)
         tfidf_smallened = svd.transform(tfidf_matrix)
         print(svd.singular_values_)
@@ -147,19 +147,20 @@ class InformationRetrieval():
             cos_sim = (tfidf_smallened@query_smaller.T)/np.array(doc_mag_list)
 
             query_doc_sim = list(zip(cos_sim,list_docs))
-            query_doc_sim2 = []  
-            for docID in index:
-                cos_sim2 = 0.0
-                for word in query_vector:
-                    if(word in index[docID]):
+            # query_doc_sim2 = []  
+            # for docID in index:
+            #     cos_sim2 = 0.0
+            #     for word in query_vector:
+            #         if(word in index[docID]):
 
-                        cos_sim2 +=  (query_vector[word]*index[docID][word]*(wordIDF[word]**2))
-                cos_sim2 /= (query_mag*doc_mags[docID])
-                query_doc_sim2.append([cos_sim2, docID])
+            #             cos_sim2 +=  (query_vector[word]*index[docID][word]*(wordIDF[word]**2))
+            #     cos_sim2 /= (query_mag*doc_mags[docID])
+            #     query_doc_sim2.append([cos_sim2, docID])
             curr_doc_IDs_ordered = []
-            query_doc_sim.sort(reverse = True)
-            query_doc_sim2.sort(reverse=True)
-            for ranking in query_doc_sim:
+            qds = query_doc_sim[0:1399]
+            qds.sort(reverse=True)
+
+            for ranking in qds:
                 curr_doc_IDs_ordered.append(ranking[1])
             doc_IDs_ordered.append(curr_doc_IDs_ordered)
         return doc_IDs_ordered
