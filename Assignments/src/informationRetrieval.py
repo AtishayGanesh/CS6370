@@ -69,7 +69,9 @@ class InformationRetrieval():
         arg1 : list
             A list of lists of lists where each sub-list is a query and
             each sub-sub-list is a sentence of the query
-        
+        arg2 : int
+            An integer which denotes number of singular values to be 
+            considered
 
         Returns
         -------
@@ -77,6 +79,7 @@ class InformationRetrieval():
             A list of lists of integers where the ith sub-list is a list of IDs
             of documents in their predicted order of relevance to the ith query
         """
+        print('started rank')
         index = self.index
         N = self.N
         rev_index = self.rev_index
@@ -84,6 +87,7 @@ class InformationRetrieval():
         doc_mags = {}
         doc_mag_list = []
         wordIDF = {}
+        print('started wordIDF')
         for word in rev_index:
             wordIDF[word] = np.log((self.N+0.5)/(len(rev_index[word])+0.5))
         for docID in index:
@@ -97,6 +101,7 @@ class InformationRetrieval():
         list_docs = list(index.keys())
         word_locs = dict(zip(list_words,(list(range(len(list_words))))))
         tfidf_matrix =[]
+        print('started tfidf_matrix')
         for i in index.keys():
             tfidf_row = np.zeros(len(list_words))
             total_len = 0 
@@ -107,7 +112,7 @@ class InformationRetrieval():
             #tfidf_row /= total_len
             tfidf_matrix.append(tfidf_row)
         tfidf_matrix = np.array(tfidf_matrix)
-
+        print('started SVD')
         svd = TruncatedSVD(n_components=n_components,n_iter=10,random_state=420)
         svd.fit(tfidf_matrix)
         tfidf_smallened = svd.transform(tfidf_matrix)
@@ -115,6 +120,7 @@ class InformationRetrieval():
 
         
         ct = 0
+        print('started qrel')
         for query in queries:
             query_vector={}
             for sentence in query:
@@ -138,11 +144,11 @@ class InformationRetrieval():
                         query_mag += (query_vector[word]*np.log((self.N+0.5)/(0.5)))**2
                 except:
                     print(len(wordIDF),len(word_locs))
+
             query_mag = np.sqrt(query_mag) + 0.01
             query_row/=(query_mag)
 
             query_smaller = svd.transform(query_row.reshape(1,-1))[0]
-
 
             cos_sim = (tfidf_smallened@query_smaller.T)/np.array(doc_mag_list)
 

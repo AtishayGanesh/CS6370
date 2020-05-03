@@ -159,19 +159,20 @@ class SearchEngine:
         doc_ids, docs = [item["id"] for item in docs_json], \
                                 ([item["body"] for item in docs_json])
         n_components =1200
-        # Process documents
+
         print(len(doc_ids))
         if args.extend:
             docs = docs +list_wiki
             n_components=1400
             doc_ids = doc_ids + list(range(max(doc_ids)+1,max(doc_ids)+len(list_wiki)+1))
-
+        # Process documents
         processedDocs = self.preprocessDocs(docs)
         # Build document index
+
         self.informationRetriever.buildIndex(processedDocs, doc_ids)
+
         # Rank the documents for each query
         doc_IDs_ordered = self.informationRetriever.rank(processedQueries,n_components)
-
         # Read relevance judements
         qrels = json.load(open(args.dataset + "cran_qrels.json", 'r'))[:]
 
