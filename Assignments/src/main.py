@@ -153,7 +153,7 @@ class SearchEngine:
         processedQueries = self.preprocessQueries(queries)
 
         # Read documents
-        with open('Wikipedia_cleaned_old.dat','rb') as fp:
+        with open('Wikipedia_cleaned_4k.dat','rb') as fp:
             list_wiki =pickle.load(fp)
             print(len(list_wiki))
 
